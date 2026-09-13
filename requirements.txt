@@ -1,0 +1,17 @@
+numpy
+pandas
+matplotlib
+seaborn
+pyodbc
+ipykernel
+pyarrow
+scikit-learn
+xgboost
+PyYAML
+pytest
+fastapi
+pydantic
+uvicorn
+mlflow
+great-expectations
+dvc

@@ -1,0 +1,19 @@
+paths:
+  data: data
+  artifacts: data/artifacts
+  models: models
+
+models:
+  name: xgboost
+  file: xgboost_final_model.joblib
+  threshold_file: decision_threshold.joblib
+
+api:
+  host: 0.0.0.0
+  port: 8000
+
+mlflow:
+  tracking_uri: http://127.0.0.1:5000
+  model_name: olist-xgboost
+  model_version: '1'
+
