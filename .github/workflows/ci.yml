@@ -40,6 +40,8 @@ jobs:
           ruff format --check app src tests
 
       - name: Run tests
+        env:
+          PYTHONPATH: .
         run: |
           pytest -q
 
