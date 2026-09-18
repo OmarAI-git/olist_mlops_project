@@ -33,11 +33,11 @@ jobs:
 
       - name: Run Ruff lint
         run: |
-          ruff check .
+          ruff check app src tests
 
       - name: Check formatting
         run: |
-          ruff format --check .
+          ruff format --check app src tests
 
       - name: Run tests
         run: |
