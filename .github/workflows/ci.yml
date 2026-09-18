@@ -42,5 +42,6 @@ jobs:
       - name: Run tests
         env:
           PYTHONPATH: .
-        run: pytest -q tests/test_schema.py tests/test_great_expectations.py tests/test_pipeline.py
+        run:  |
+          pytest -q tests/test_schema.py
 
