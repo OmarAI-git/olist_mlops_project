@@ -15,5 +15,5 @@ api:
 mlflow:
   tracking_uri: http://127.0.0.1:5000
   model_name: olist-xgboost
-  model_version: '1'
+  model_alias: 'champion'
 

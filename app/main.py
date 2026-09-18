@@ -1,34 +1,49 @@
 from fastapi import FastAPI
-from src.config import MODEL_NAME, FINAL_MODEL
-from src.predictor import load_threshold
+from src.config import MODEL_NAME, FINAL_MODEL, MLFLOW_MODEL_ALIAS
+from src.predictor import load_threshold, get_model_version
 from src.logging_config import setup_logging
-from app.schema import OrderRequest
-from app.service import predict_order
+from app.schema import OrderRequest, BatchPredictionRequest, BatchPredictionsResponse
+from app.service import predict_order, predict_orders
+from src.model_loader import load_inference_artifacts
+from contextlib import asynccontextmanager
 
 
 setup_logging()
 
-app = FastAPI(
-    title = 'Olist Late Delivery Prediction API',
-    version = '0.1.0'
-)
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    load_inference_artifacts()
+    yield
 
 
-@app.get('/health')
+app = FastAPI(title="Olist Late Delivery Prediction API", version="0.1.0")
+
+
+@app.get("/health")
 def home():
-    return {'status':'ok'}
+    return {"status": "ok"}
 
-@app.get('/model-info')
+
+@app.get("/model-info")
 def model_info():
     threshold = load_threshold()
     return {
-        'model_name': MODEL_NAME,
-        'model_file': FINAL_MODEL.name,
-        'threshold': threshold
+        "model_name": MODEL_NAME,
+        "model_file": FINAL_MODEL.name,
+        "model_alias": MLFLOW_MODEL_ALIAS,
+        "model_version": get_model_version(),
+        "threshold": threshold,
     }
 
-@app.post('/predict')
+
+@app.post("/predict")
 def predict(order: OrderRequest):
     return predict_order(order)
 
 
+@app.post("/predict/batch", response_model=BatchPredictionsResponse)
+def predict_batch(request: BatchPredictionRequest):
+    predictions = predict_orders(request.orders)
+
+    return {"predictions": predictions}

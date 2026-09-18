@@ -1,35 +1,30 @@
+import pytest
 from datetime import datetime
 from app.schema import OrderRequest
 from app.service import predict_order
+from fastapi import HTTPException
 
 
 def test_predict_order():
     order = OrderRequest(
         order_purchase_timestamp=datetime(2018, 1, 1, 10, 30),
         order_estimated_delivery_date=datetime(2018, 1, 10),
-
         order_status="delivered",
         customer_city="sao paulo",
         customer_state="SP",
-
         customer_zip_code_prefix=12345,
         item_count=2,
-
         total_price=100.0,
         total_freight_value=20.0,
-
         payment_count=1,
         total_payment=120.0,
-
         avg_product_name_length=50.0,
         avg_product_description_length=200.0,
-
         avg_product_height_cm=10.0,
         avg_product_length_cm=20.0,
         avg_product_photos_qty=3.0,
         avg_product_width_cm=15.0,
         avg_product_weight_g=500.0,
-
         product_count=2,
         seller_count=1,
     )
@@ -43,4 +38,31 @@ def test_predict_order():
     assert 0 <= result["probability"] <= 1
 
 
+def test_predict_order_rejects_invalid_data():
+    order = OrderRequest(
+        order_purchase_timestamp=datetime(2018, 1, 1, 10, 30),
+        order_estimated_delivery_date=datetime(2018, 1, 10),
+        order_status="delivered",
+        customer_city="sao paulo",
+        customer_state="SP",
+        customer_zip_code_prefix=12345,
+        item_count=2,
+        total_price=-10.0,
+        total_freight_value=20.0,
+        payment_count=1,
+        total_payment=120.0,
+        avg_product_name_length=50.0,
+        avg_product_description_length=200.0,
+        avg_product_height_cm=10.0,
+        avg_product_length_cm=20.0,
+        avg_product_photos_qty=3.0,
+        avg_product_width_cm=15.0,
+        avg_product_weight_g=500.0,
+        product_count=2,
+        seller_count=1,
+    )
 
+    with pytest.raises(HTTPException) as exc_info:
+        predict_order(order)
+
+    assert exc_info.value.status_code == 400

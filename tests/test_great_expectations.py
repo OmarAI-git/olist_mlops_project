@@ -1,22 +1,22 @@
 import pandas as pd
 import great_expectations as gx
+from src.validation import validate_order_data
 
 
 def test_order_status_column_exists():
-
-    df = pd.read_parquet('data/artifacts/03_train.parquet')
+    df = pd.read_parquet("data/artifacts/03_train.parquet")
 
     context = gx.get_context()
 
-    data_source = context.data_sources.add_pandas('olist_data_source')
+    data_source = context.data_sources.add_pandas("olist_data_source")
 
-    data_asset = data_source.add_dataframe_asset('test_data')
+    data_asset = data_source.add_dataframe_asset("test_data")
 
-    batch_definition = data_asset.add_batch_definition_whole_dataframe('test_batch')
+    batch_definition = data_asset.add_batch_definition_whole_dataframe("test_batch")
 
-    batch = batch_definition.get_batch(batch_parameters = {'dataframe':df})
+    batch = batch_definition.get_batch(batch_parameters={"dataframe": df})
 
-    expectation = gx.expectations.ExpectColumnToExist(column = 'order_status')
+    expectation = gx.expectations.ExpectColumnToExist(column="order_status")
 
     result = batch.validate(expectation)
 
@@ -24,25 +24,29 @@ def test_order_status_column_exists():
 
 
 def test_total_price_is_not_negative():
-
-    df = pd.read_parquet('data/artifacts/03_train.parquet')
+    df = pd.read_parquet("data/artifacts/03_train.parquet")
 
     context = gx.get_context()
 
-    data_source = context.data_sources.add_pandas('olist_data_source')
-    data_asset = data_source.add_dataframe_asset('test_data')
+    data_source = context.data_sources.add_pandas("olist_data_source")
+    data_asset = data_source.add_dataframe_asset("test_data")
 
-    batch_definition = data_asset.add_batch_definition_whole_dataframe('test_batch')
+    batch_definition = data_asset.add_batch_definition_whole_dataframe("test_batch")
 
-    batch = batch_definition.get_batch(batch_parameters = {'dataframe':df})
+    batch = batch_definition.get_batch(batch_parameters={"dataframe": df})
 
-    expectation = gx.expectations.ExpectColumnValuesToBeBetween(column = 'total_price', min_value = 0)
+    expectation = gx.expectations.ExpectColumnValuesToBeBetween(
+        column="total_price", min_value=0
+    )
 
     result = batch.validate(expectation)
 
     assert result.success
 
 
+def test_missing_required_value_is_rejected():
+    df = pd.read_parquet("data/artifacts/03_test.parquet").head(1).copy()
 
+    df.loc[df.index[0], "total_price"] = None
 
-
+    assert validate_order_data(df) is False

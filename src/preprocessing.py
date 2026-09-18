@@ -2,7 +2,7 @@ import joblib
 from src.config import ARTIFACTS
 
 
-PREPROCESSOR_PATH = ARTIFACTS / 'preprocessor.joblib'
+PREPROCESSOR_PATH = ARTIFACTS / "preprocessor.joblib"
 
 
 def load_preprocessor():
@@ -11,7 +11,3 @@ def load_preprocessor():
 
 def transform_features(df, preprocessor):
     return preprocessor.transform(df)
-
-
-
-

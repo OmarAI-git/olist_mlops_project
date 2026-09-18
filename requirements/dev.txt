@@ -1,0 +1,11 @@
+-r runtime.txt
+
+pytest==9.1.1
+httpx==0.28.1
+dvc==3.67.1
+ipykernel==7.3.0
+matplotlib==3.11.1
+seaborn==0.13.2
+pyodbc==5.3.0
+ruff==0.13.1
+pre-commit==4.3.0

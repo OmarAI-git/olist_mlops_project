@@ -3,7 +3,6 @@ from pydantic import BaseModel
 
 
 class OrderRequest(BaseModel):
-
     order_purchase_timestamp: datetime
     order_estimated_delivery_date: datetime
 
@@ -32,3 +31,15 @@ class OrderRequest(BaseModel):
     seller_count: int
 
 
+class PredictionResponse(BaseModel):
+    prediction: int
+    probability: float
+    model_version: str
+
+
+class BatchPredictionRequest(BaseModel):
+    orders: list[OrderRequest]
+
+
+class BatchPredictionsResponse(BaseModel):
+    predictions: list[PredictionResponse]
