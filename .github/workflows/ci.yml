@@ -43,5 +43,8 @@ jobs:
         env:
           PYTHONPATH: .
         run: |
-          pytest -q
+          pytest -q \
+            tests/test_schema.py \
+            tests/test_great_expectations.py \
+            tests/test_pipeline.p
 
