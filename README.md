@@ -565,9 +565,3 @@ http://localhost:8000/docs
 ```
 
 The FastAPI Swagger UI provides interactive documentation and allows testing the prediction endpoints.
-
----
-
-## 18. Project Completion
-
-The project implement
