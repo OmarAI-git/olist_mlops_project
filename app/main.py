@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from src.config import MODEL_NAME, FINAL_MODEL, MLFLOW_MODEL_ALIAS
 from src.predictor import load_threshold, get_model_version
 from src.logging_config import setup_logging
@@ -6,6 +6,7 @@ from app.schema import OrderRequest, BatchPredictionRequest, BatchPredictionsRes
 from app.service import predict_order, predict_orders
 from src.model_loader import load_inference_artifacts
 from contextlib import asynccontextmanager
+from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 
 
 setup_logging()
@@ -35,6 +36,11 @@ def model_info():
         "model_version": get_model_version(),
         "threshold": threshold,
     }
+
+
+@app.get("/metrics")
+def metrics():
+    return Response(content=generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
 
 @app.post("/predict")
